@@ -1,0 +1,116 @@
+#include <stdio.h>
+#define MAX_NUM 9                   
+#define VRType int 
+#define VertexType int 
+#define INFINITY 65535
+
+typedef struct 
+{
+    VertexType vexs[MAX_NUM];       
+    VRType arcs[MAX_NUM][MAX_NUM];
+    int vexnum,arcnum; 
+}MGraph;
+
+typedef int PathMatrix[MAX_NUM];    
+typedef int ShortPathTable[MAX_NUM]; 
+
+int LocateVex(MGraph * G,VertexType v)
+{
+    int i=0;
+    //遍历一维数组，找到变量v
+    for (i=0; i<G->vexnum; i++) 
+	{
+        if (G->vexs[i]==v) 
+		{
+            break;
+        }
+    }
+    if (i>G->vexnum) 
+	{
+        printf("no such vertex.\n");
+        return -1;
+    }
+    return i;
+}
+//构造有向网
+void CreateUDG(MGraph *G)
+{
+	printf("请输入顶点数和边数：");
+    scanf("%d,%d",&(G->vexnum),&(G->arcnum));
+    printf("请输入顶点：\n");
+    for (int i=0; i<G->vexnum; i++) 
+	{
+        scanf("%d",&(G->vexs[i]));
+    }
+    for (int i=0; i<G->vexnum; i++) 
+	{
+        for (int j=0; j<G->vexnum; j++) 
+		{
+            G->arcs[i][j]=INFINITY;
+        }
+    }
+    printf("请输入顶点及其间权值：\n");
+    for (int i=0; i<G->arcnum; i++) 
+	{
+		int  v1,v2,w;
+        scanf("%d,%d,%d",&v1,&v2,&w);
+        int n=LocateVex(G, v1);
+        int m=LocateVex(G, v2);
+        if (m==-1 ||n==-1) {
+            printf("no this vertex\n");
+            return;
+        }
+        G->arcs[n][m]=w;
+    }
+}
+
+void Dijkstra(MGraph G,int v0,PathMatrix *p,ShortPathTable *D)
+{
+    int final[MAX_NUM];
+    for (int v=0; v<G.vexnum; v++) 
+	{//初始化
+        final[v]=0;
+        (*D)[v]=G.arcs[v0][v];
+        (*p)[v]=0;
+    }
+    (*D)[v0]=0;
+    final[v0]=1;
+    int k = 0;
+    for (int i=0; i<G.vexnum; i++)
+	{
+        int min=INFINITY;
+        for (int w=0; w<G.vexnum; w++) 
+		{
+            if (!final[w]) 
+			{
+                if ((*D)[w]<min) 
+				{
+                    k=w;
+                    min=(*D)[w];
+                }
+            }
+        }
+        final[k]=1;
+        for (int w=0; w<G.vexnum; w++)
+		{
+            if (!final[w]&&(min+G.arcs[k][w]<(*D)[w])) 
+			{
+                (*D)[w]=min+G.arcs[k][w];
+                (*p)[w]=k;//记录各个最短路径上存在的顶点
+            }
+        }
+    }
+}
+int main(){
+    MGraph G;
+    CreateUDG(&G);
+    PathMatrix P;
+    ShortPathTable D;
+    Dijkstra(G, 0, &P, &D);
+    printf("a点到各顶点的最短路径长度为:\n");
+    for (int i=1; i<G.vexnum; i++) 
+	{
+        printf("%d - %d : %d \n",G.vexs[0],G.vexs[i],D[i]);
+    }
+    return 0;
+}
