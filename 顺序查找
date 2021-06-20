@@ -1,0 +1,38 @@
+#include<stdio.h>
+
+int FindBySeq(int a[], int n, int x)
+{
+    int temp=0;
+    for (int i=0;i<n;i++)
+    {
+        if (a[i]==x)
+		{
+			printf("%d\n",i);
+		}
+        else
+        {
+        	temp++;
+		}
+    }
+    if(temp==n)
+    {
+    	printf("0\n");
+	}
+    return 0;
+}
+
+int main()
+{
+	int i,x,a[100],n;
+    printf("请输入数组的长度：\n");
+    scanf("%d",&n);
+    printf("请输入数组元素：\n");
+    for(i=0;i<n;i++)
+    scanf("%d",&a[i]);
+    printf("请输入你想查找的元素：\n");
+    scanf("%d",&x);
+	FindBySeq(a,n,x);
+	printf("\n");
+    return 0;
+}
+
